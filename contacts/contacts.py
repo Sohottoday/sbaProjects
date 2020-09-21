@@ -1,16 +1,17 @@
 class Contact:
     def __init__(self, name, phone, email, addr):
-        self.name = name
+        self.name = name    # self.name과 name은 서로 다른 존재인데, 할당함으로써 연결된다.
         self.phone = phone
         self.email = email
         self.addr = addr
 
     def print_info(self):
         print(f'이름 : {self.name}, 전화번호 : {self.phone}, 이메일 : {self.email}, 주소 : {self.addr}')
+        # self.name과 name은 서로 다른 존재이므로 {self.name}과 {name}은 서로 다른 상태이다.
 
     @staticmethod
     def set_contact():
-        name = input('이름')        # 나머지 완성
+        name = input('이름')        
         phone = input('전화번호')
         email = input('이메일')
         addr = input('주소')
