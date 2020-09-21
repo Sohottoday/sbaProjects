@@ -1,4 +1,4 @@
-class Class1()
+class Class1:
 
 """
 python의 데코레이터는 함수형 2가지, class형 2가지 총 4가지 방식을 통해 작성할 수 있습니다.
