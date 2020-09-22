@@ -1,5 +1,5 @@
-from titanic.entity import Entity
-from titanic.service import Service
+from user.entity import Entity
+from user.service import Service
 
 class Controller:
     def __init__(self):
@@ -7,11 +7,11 @@ class Controller:
         self.service = Service()
 
     
-    def preprocessing(self)# -> object:
+    def preprocessing(self):
         pass
 
 
-    def modeling(self)# -> object:
+    def modeling(self):
         pass
 
 
@@ -21,3 +21,5 @@ class Controller:
 
     def submit(self):
         pass
+
+
