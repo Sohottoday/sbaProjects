@@ -39,25 +39,19 @@ class Service:
         mylist = []
         for abcd in mytarget:
             myhref = abcd.find('a').attrs['href']
-            #print(myhref)
 
             myhref = myhref.replace('/webtoon/list.nhn?', '')
             result = myhref.split('&')
-            #print(result)
 
             mytitleId = result[0].split('=')[1]
             myweekday = result[1].split('=')[1]
-            #print(mytitleId)
-            #print(myweekday)
 
             imgtag = abcd.find('img')
             mytitle = imgtag.attrs['title'].strip()
             mytitle = mytitle.replace('?', '').replace(':', '')
-            #print(mytitle)
 
             mysrc = imgtag.attrs['src']
-            #print(mysrc)
-            #break
+
             self.service.create_folder_weekend(mysrc, myweekday, mytitle)
 
             sublist = []
@@ -83,7 +77,6 @@ class Service:
         weekday_dict = {'mon': '월요일', 'tue': '화요일', 'wed': '수요일', 'thu': '목요일', 'fri': '금요일', 'sat': '토요일', 'sun': '일요일'}
 
     # shutil : shell utility : 고수준 파일 연산. 표준 라이브러리
-
         myfolder = 'd:\\imsi2\\' # 유닉스 기반은 '/'이 구분자
 
         try:
@@ -103,11 +96,10 @@ class Service:
         except FileExistsError as err:
             print(err)
 
-    #def saveFile(mysrc, myweekday, mytitle):
         image_file = urlopen(mysrc)
-        filename = myfolder + weekday_dict[myweekday] + '/' + mytitle + '.jpg'
+        filename = myfolder + weekday_dict[myweekday] + '\\' + mytitle + '.jpg'
         myfile = open(filename, mode='wb')
-        myfile.write(image_file.read())     # 바이트 형태로 저장
+        myfile.write(image_file.read())
         myfile.close()    
 
 
