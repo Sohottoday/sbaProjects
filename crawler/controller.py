@@ -15,4 +15,5 @@ if __name__ == '__main__':
     api = Controller()
     service = Service()
     service.naver_cartoon()
+    service.naver_movie()
 
