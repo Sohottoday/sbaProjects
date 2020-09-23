@@ -1,17 +1,21 @@
+import sys
+sys.path.insert(0, '/Users/user/SbaProjects') 
 import nltk
-from textmining.entity import Entity
-from textmining.samsung_service import SamsungService
+from miner.entity import Entity
+from miner.service import SamsungService
 
 class Controller:
     def __init__(self):
         pass
+    
     def download_dictionary(self):
         nltk.download('all')
+    
     def data_analysis(self):
         entity = Entity()
         service = SamsungService()
         entity.fname = 'kr-Report_2018.txt'
-        entity.context = './data/'
+        entity.context = '/Users/user/SbaProjects/miner/data/'
         service.extract_token(entity)
         service.extract_hanguel()
         service.conversion_token()
@@ -22,7 +26,7 @@ class Controller:
         service.frequent_text()
         entity.fname = 'D2Coding.ttf'
         service.draw_wordcloud(entity)
-        
+
 if __name__ == '__main__':
     def print_menu():
         print('0. Exit')
