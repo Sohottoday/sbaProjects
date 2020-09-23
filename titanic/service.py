@@ -4,6 +4,18 @@ sys.path.insert(0, '/Users/user/SbaProjects')
 import pandas as pd
 import numpy as np
 
+# sklearn algorithm : classification, regression, clustring, reduction
+# classifier 을 많이 가져온 이유는 classification을 하기 위함
+# k값은 count의 의미로 이해
+from sklearn.tree import DecisionTreeClassifier         # dtree
+from sklearn.ensemble import RandomForestClassifier     # r-forest
+from sklearn.naive_bayes import GaussianNB              # nb
+from sklearn.svm import SVC                             # svm
+from sklearn.neighbors import KNeighborsClassifier      # knn
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold               # fold는 접는다는 의미로 k가 있으므로 몇번 접느냐는 의미 : 데이터를 몇조각을 낼 것이냐는 의미에 가깝다.
+from sklearn.model_selection import cross_val_score
+
 
 """
 ### PassengerId  고객ID,           @ 문제
@@ -56,13 +68,28 @@ class Service:
         return this
 
     @staticmethod
-    def name_nominal(this) -> object:
+    def title_nominal(this) -> object:          #name
+        combine = [this.train, this.test]
+        for dataset in combine:
+            dataset['Title'] = dataset.Name.str.extract('([A-Za-z]+)\.', expand=False)
+        for dataset in combine:
+            dataset['Title'] = dataset['Title'].replace(['Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Jonkheer', 'Dona', 'Mme'], 'Rare')
+            dataset['Title'] = dataset['Title'].replace(['Countess', 'Lady', 'Sir'], 'Royal')
+            dataset['Title'] = dataset['Title'].replace('Ms', 'Miss')
+            dataset['Title'] = dataset['Title'].replace('Mile', 'Mr')
+        title_mapping = {'Mr':1, 'Miss':2, 'Mrs':3, 'Master':4, 'Royal':5, 'Rare':6}
+        for dataset in combine:
+            dataset['Title'] = dataset['Title'].map(title_mapping)
+            dataset['Title'] = dataset['Title'].fillna(0)       # Unknown
+        this.train = this.train
+        this.test = this.test
+
         return this
 
     @staticmethod
     def sex_nominal(this) -> object:        # male = 0, female = 1
         combine = [this.train, this.test]       # 반복된 코드를 피하기 위해 사용, train과 test가 묶인다.
-        sex_mapping = {'mail':0, 'female':1}
+        sex_mapping = {'male':0, 'female':1}
         for dataset in combine:
             dataset['Sex'] = dataset['Sex'].map(sex_mapping)
 
@@ -96,7 +123,31 @@ class Service:
             6: 'Adult',
             7: 'Senior'
         }   # []에서 {}으로 처리하면 labels를 값으로 처리하겠다는 의미
+        
+        for x in range(len(train['AgeGroup'])):
+            if train['AgeGroup'][x] == 'Unknown':
+                train['AgeGroup'][x] = age_title_mapping[train['Title'][x]]
+        for x in range(len(test['AgeGroup'])):
+            if test['AgeGroup'][x] == 'Unknown':
+                test['AgeGroup'][x] = age_title_mapping[test['Title'][x]]
+
+        age_mapping = {
+            'Unknown' : 0,
+            'Baby' : 1,
+            'Child' : 2,
+            'Teenager' : 3,
+            'Student' : 4,
+            'Young Adult' : 5,
+            'Adult' : 6,
+            'Senior' : 7
+        }
+        train['AgeGroup'] = train['AgeGroup'].map(age_mapping)
+        test['AgeGroup'] = test['AgeGroup'].map(age_mapping)
+        this.train = train
+        this.test = test
+        
         return this
+
 
     @staticmethod
     def sibsp_numeric(this) -> object:
@@ -132,3 +183,40 @@ class Service:
 
 
     
+    # Machine Learning  :   dtree, rforest, nb, knn, svm 이것을 대표로 사용
+
+    @staticmethod
+    def create_k_fold():            # 먼저 데이터를 조각내준다..?
+        return KFold(n_splits=10, shuffle=True, random_state=0)
+
+    
+    def accuracy_by_dtree(self, this):
+        dtree = DecisionTreeClassifier()
+        score = cross_val_score(dtree, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_rforest(self, this):
+        rforest = RandomForestClassifier()
+        score = cross_val_score(rforest, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_nb(self, this):
+        nb = GaussianNB()
+        score = cross_val_score(nb, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_knn(self, this):
+        knn = KNeighborsClassifier()
+        score = cross_val_score(knn, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_svm(self, this):
+        svm = SVC()
+        score = cross_val_score(svm, this.train, this.label, cv=Service.create_k_fold(), n_jobs=1, scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
+
+    
+
+    
+
