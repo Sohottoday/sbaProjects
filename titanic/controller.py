@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from titanic.entity import Entity
 from titanic.service import Service
+from sklearn.ensemble import RandomForestClassifier
 
 """
 PassengerId  고객ID,
@@ -84,9 +85,15 @@ class Controller:
         print(f'SVM 검증결과 : {service.accuracy_by_svm(this)}')
 
 
-    def submit(self):           # machine이 된다. 이 단계에서는 캐글에게 내 머신을 보내서 평가받게 하는 것.
-        pass
+    def submit(self, train, test):           # machine이 된다. 이 단계에서는 캐글에게 내 머신을 보내서 평가받게 하는 것.
+        this = self.modeling(train, test)
+        clf = RandomForestClassifier()
+        clf.fit(this.train, this.label)
+        prediction = clf.predict(this.test)
+        pd.DataFrame(
+            {'PassengerId' : this.id, 'Survived' : prediction}
+        ).to_csv(this.context+'submission.csv', index=False)
 
 if __name__ == '__main__':
     ctrl = Controller()
-    ctrl.learning('train.csv', 'test.csv')
+    ctrl.submit('train.csv', 'test.csv')
