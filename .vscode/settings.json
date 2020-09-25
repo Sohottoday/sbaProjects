@@ -1,4 +1,11 @@
 {
     "python.pythonPath": "C:\\Anaconda3\\envs\\tensorflow\\python.exe",
-    "python.linting.enabled": false
+    "python.linting.enabled": false,
+    "emmet.excludeLanguages": [
+
+        "markdown"
+    ],
+    // sba 교육을 통한 추가 설정
+    "emmet.triggerExpansionOnTab": true,
+    "emmet.includeLanguages": {"javascript": "javascriptreact"}
 }
