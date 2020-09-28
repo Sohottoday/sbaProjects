@@ -1,5 +1,13 @@
+# import sys
+# sys.path.insert(0, '/Users/user/SbaProjects')       # vscode가 자동경로를 못잡기 때문
+
+import os
 import sys
-sys.path.insert(0, '/Users/user/SbaProjects')       # vscode가 자동경로를 못잡기 때문
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
+basedir = os.path.dirname(os.path.abspath(__file__))
+
+from config import basedir
 
 from utill.file_handler import FileReader
 
@@ -43,15 +51,18 @@ Embarked 승선한 항구명 C = 쉐브루, Q = 퀸즈타운, S = 사우스햄�
 class Service:
     def __init__(self):
         self.fileReader = FileReader()
+        self.kaggle = os.path.join(basedir, 'kaggle')
+        self.data = os.path.join(self.kaggle, 'data')
               
 
     # static으로 할 경우에는 @staticmethod 를 붙이고 동적(dynamic)으로 할 예정이면 매개변수에 self를 넣는다.(static일 경우 넣지 않는다.)
     def new_model(self, payload) -> object:
         this = self.fileReader
-        this.context = '/Users/user/SbaProjects/titanic/data/'
+        this.data = self.data
+        #this.context = '/Users/user/SbaProjects/titanic/data/'
                                     # setter 는 할당연산자 = 이 존재하고 getter는 할당연산자가 존재하지 않는다.
         this.fname = payload
-        return pd.read_csv(this.context + this.fname)       # p.139     df = tensor
+        return pd.read_csv(os.path.join(this.data, this.fname))       # p.139     df = tensor
 
     @staticmethod           # 계속 작동되고 있어야 하므로
     def create_train(this) -> object:     
@@ -233,8 +244,12 @@ class Service:
 
 class Controller:
     def __init__(self):
-        self.fileReader = FileReader()
+        #self.fileReader = FileReader()
         self.service = Service()
+
+        self.fileReader = FileReader()
+        self.kaggle = os.path.join(basedir, 'kaggle')
+        self.data = os.path.join(self.kaggle, 'data')
 
 
     def modeling(self, train, test): # -> object
@@ -304,8 +319,9 @@ class Controller:
         prediction = clf.predict(this.test)
         pd.DataFrame(
             {'PassengerId' : this.id, 'Survived' : prediction}
-        ).to_csv(this.context+'submission.csv', index=False)
+        ).to_csv(os.path.join(self.data, 'submission.csv'), index=False)
 
 if __name__ == '__main__':
+    print(f'**********{basedir}***********')
     ctrl = Controller()
     ctrl.submit('train.csv', 'test.csv')
