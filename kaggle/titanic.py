@@ -9,7 +9,7 @@ basedir = os.path.dirname(os.path.abspath(__file__))
 
 from config import basedir
 
-from utill.file_handler import FileReader
+from util.file_handler import FileReader
 
 
 #from titanic.service import Service
